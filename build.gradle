@@ -1,0 +1,9 @@
+apply plugin: "groovy"
+
+dependencies{
+  compile gradleApi()
+}
+
+task wrapper(type:Wrapper) {
+  gradleVersion = "2.3"
+}
