@@ -16,12 +16,12 @@ import org.gradle.api.tasks.TaskAction
  */
 class EscrowResolveDependenciesTask extends DefaultTask {
 
-    def PomsModel pomsModel
+    def List<PomDependency> poms
 
     @TaskAction
     def resolve() {
 
-        final def Action<ResolvableDependencies> afterResolver = getAfterResolver(pomsModel)
+        final def Action<ResolvableDependencies> afterResolver = getAfterResolver(poms)
 
         project.configurations.all(installResolver.curry(afterResolver))
         project.configurations.all { it.incoming.resolutionResult.allComponents }
@@ -32,14 +32,14 @@ class EscrowResolveDependenciesTask extends DefaultTask {
     }
 
 
-    def getAfterResolver(PomsModel pomsModel) {
-        new EscrowAfterResolver(project: project, pomsModel: pomsModel)
+    def getAfterResolver(List<PomDependency> poms) {
+        new EscrowAfterResolver(project: project, poms:poms)
     }
 
     static class EscrowAfterResolver implements Action<ResolvableDependencies> {
 
         def Project project
-        def PomsModel pomsModel
+        def List<PomDependency> poms
 
         @Override
         void execute(ResolvableDependencies resolvableDependencies) {
@@ -48,7 +48,10 @@ class EscrowResolveDependenciesTask extends DefaultTask {
 
         def addToModel = { ResolvedComponentResult result ->
             if (resultIsNotLocalProject(result)) {
-                pomsModel.add(result)
+                poms << (new PomDependencyBuilder(project: project,
+                        groupId:result.moduleVersion.group,
+                        module:result.moduleVersion.name,
+                        version:result.moduleVersion.version).build())
             }
         }
 

@@ -18,20 +18,19 @@ class EscrowTasksAction implements Action<Project> {
     @Override
     void execute(Project project) {
         final def tasks = project.tasks
-        final def pomDependencyModel = new PomsModel()
+        final def List<PomDependency> poms = []
 
-        final
-        def EscrowResolveDependenciesTask resolveTask = tasks.create("escrowResolveDependenciesTask", EscrowResolveDependenciesTask.class)
+        final def EscrowResolveDependenciesTask resolveTask = tasks.create("escrowResolveDependenciesTask", EscrowResolveDependenciesTask.class)
         final def EscrowResolvePomsTask pomsTask = tasks.create("escrowResolvePomsTask", EscrowResolvePomsTask.class)
         final def EscrowCopyTask copyTask = tasks.create("escrowCopyTask", EscrowCopyTask.class)
         final def escrowTask = tasks.create("escrow", EscrowTask.class)
         final def escrowClean = tasks.create("escrowClean", EscrowClean.class)
 
 
-        resolveTask.setPomsModel(pomDependencyModel)
+        resolveTask.setPoms(poms)
 
         pomsTask.dependsOn(resolveTask)
-        pomsTask.setPomsModel(pomDependencyModel)
+        pomsTask.setPoms(poms)
 
 
         copyTask.dependsOn(pomsTask, resolveTask)

@@ -8,5 +8,5 @@ package com.bszeliga.gradle.escrow
  */
 class EscrowConvention {
 
-    def List<String> configurations = ["default"]
+    def String directory = ".m2"
 }

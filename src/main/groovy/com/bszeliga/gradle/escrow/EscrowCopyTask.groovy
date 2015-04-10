@@ -21,7 +21,7 @@ class EscrowCopyTask extends DefaultTask {
     def copy() {
 //        baseDirString = project.file(project.extensions.escrow.dir)
         project.configurations.all copyConfiguration
-        copyConfiguration.call(pomsConfigurationTask.getPomsConfiguration())
+        pomsConfigurationTask.getPomsConfiguration().each copyConfiguration
     }
 
     def copyConfiguration = { Configuration configuration ->

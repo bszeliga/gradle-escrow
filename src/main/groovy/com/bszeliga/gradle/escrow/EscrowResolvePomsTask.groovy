@@ -13,17 +13,39 @@ import org.gradle.api.tasks.TaskAction
  */
 class EscrowResolvePomsTask extends DefaultTask {
 
-    def PomsModel pomsModel
-    def Configuration pomsConfiguration
+    def List<PomDependency> poms
+    def List<Configuration> pomsConfiguration = []
 
     @TaskAction
     def resolve() {
-
-        println("STARTING POMS")
-        println(pomsModel.poms)
-        final def List<Dependency> dependencies = pomsModel.poms.collect convertToDependencies
-        pomsConfiguration = project.configurations.detachedConfiguration(dependencies.toArray(new Dependency[dependencies.size()]))
+        poms += resolve(poms)
     }
 
-    def convertToDependencies = { project.dependencies.create(it) }
+    def resolve(List<PomDependency> poms) {
+        def configuration = buildConfiguration(poms)
+
+        def List<PomDependency> parentPoms = []
+        configuration.files.each {
+            def parsed = new XmlSlurper().parse(it)
+            if (parsed.parent != "") {
+                parentPoms << new PomDependencyBuilder(project: project,
+                        groupId: parsed.parent.groupId.text(),
+                        module: parsed.parent.artifactId.text(),
+                        version: parsed.parent.version.text()).build()
+            }
+        }
+
+        if (!parentPoms.empty) {
+            parentPoms += resolve(parentPoms)
+        }
+
+        pomsConfiguration << configuration
+
+        return parentPoms
+
+    }
+
+    def buildConfiguration(List<Dependency> poms) {
+        return project.configurations.detachedConfiguration(poms.toArray(new Dependency[poms.size()]))
+    }
 }
