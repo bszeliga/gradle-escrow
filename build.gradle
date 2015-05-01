@@ -1,5 +1,6 @@
 apply plugin: "groovy"
 apply plugin: 'maven-publish'
+apply plugin: "com.gradle.plugin-publish"
 
 group = "com.bszeliga.gradle"
 version = '0.0.1'
@@ -18,4 +19,18 @@ publishing {
 
 task wrapper(type:Wrapper) {
   gradleVersion = "2.3"
+}
+
+pluginBundle {
+  website = 'http://www.gradle.org/'
+  vcsUrl = 'https://github.com/bszeliga/gradle-escrow'
+  description = 'Gradle Escrow Plugin'
+  tags = ['maven', 'offline', 'escrow']
+
+  plugins {
+    greetingsPlugin {
+      id = 'com.bszeliga.gradle.escrow'
+      displayName = 'Gradle Greeting plugin'
+    }
+  }
 }
