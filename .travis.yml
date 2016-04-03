@@ -2,10 +2,8 @@ language: java
 jdk:
   - oraclejdk7
 
-before_install:
+before_deploy:
   - echo -e "gradle.publish.key=$APIKEY\ngradle.publish.secret=$APISECRET" > gradle.properties
 
-install:
-  - ./gradlew assemble
-  - ./gradlew check
+deploy:
   - ./gradlew publishPlugins
