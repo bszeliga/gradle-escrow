@@ -8,4 +8,4 @@ before_install:
 install:
   - ./gradlew assemble
   - ./gradlew check
-  - ./gradle publishPlugins
+  - ./gradlew publishPlugins
