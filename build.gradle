@@ -5,7 +5,7 @@ plugins {
 apply plugin: "groovy"
 
 group = "com.bszeliga.gradle"
-version = '0.0.1'
+version = '0.0.2'
 
 dependencies{
   compile gradleApi()
